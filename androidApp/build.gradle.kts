@@ -42,9 +42,14 @@ dependencies {
     implementation(project(":common:umbrella-compose"))
     implementation(project(":common:umbrella-core"))
     implementation(project(":common:core"))
-
+    implementation(project(":common:utils-compose"))
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+    implementation(Dependencies.Android.Compose.material3)
+    implementation("androidx.compose.foundation:foundation:1.4.3")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(Dependencies.Decompose.decompose)
     implementation(Dependencies.Android.runtime)
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+
 }

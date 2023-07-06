@@ -19,6 +19,7 @@ include(":desktopApp")
 
 include(":common:core")
 include(":common:umbrella-core")
+include(":common:utils-compose")
 include(":common:umbrella-compose")
 
 include(":common:auth:api")

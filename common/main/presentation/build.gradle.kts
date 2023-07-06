@@ -9,6 +9,7 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(":common:main:api"))
+                implementation(project(":common:core"))
             }
         }
     }

@@ -9,6 +9,8 @@ kotlin {
         commonMain {
             dependencies {
                 api(project(":common:auth:api"))
+                api(project(":common:core"))
+                implementation(Dependencies.Kotlin.jsoup)
             }
         }
     }

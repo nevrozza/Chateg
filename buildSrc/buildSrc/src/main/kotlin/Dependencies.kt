@@ -39,7 +39,7 @@ object Dependencies {
     }
 
     object Decompose {
-        private const val version = "2.0.0-beta-01"
+        private const val version = "2.0.0"
         const val decompose = "com.arkivanov.decompose:decompose:$version"
         const val androidCompose = "com.arkivanov.decompose:extensions-compose-jetpack:$version"
         const val compose = "com.arkivanov.decompose:extensions-compose-jetbrains:$version"

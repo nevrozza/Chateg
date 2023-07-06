@@ -18,6 +18,7 @@ kotlin {
                 implementation(project(":common:umbrella-core"))
                 implementation(project(":common:umbrella-compose"))
                 implementation(Dependencies.Decompose.compose)
+                implementation(compose.material3)
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.6.4")
             }
         }

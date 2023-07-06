@@ -7,11 +7,11 @@ repositories {
     mavenLocal()
     google()
     gradlePluginPortal()
-
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
 
 dependencies {
+
     implementation(Dependencies.Kotlin.gradlePlugin)
     implementation(Dependencies.Compose.gradlePlugin)
     implementation(Dependencies.Android.gradlePlugin)

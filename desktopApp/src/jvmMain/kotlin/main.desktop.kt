@@ -1,3 +1,6 @@
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
@@ -9,10 +12,16 @@ import root.RootComponentImpl
 import javax.swing.JFrame
 import javax.swing.SwingUtilities
 
+@ExperimentalMaterial3Api
+@ExperimentalAnimationApi
+@ExperimentalComposeUiApi
 @OptIn(ExperimentalDecomposeApi::class)
 fun main() {
 
-    PlatformSDK.init()
+    PlatformSDK.init(
+        PlatformConfiguration(),
+        OS(OSs.PC.name)
+    )
     val lifecycle = LifecycleRegistry()
 
     val root =
@@ -30,7 +39,7 @@ fun main() {
         Window(
             onCloseRequest = {exitApplication()},
             state = windowState,
-            title = "sad"
+            title = "CHATEG.ru"
         ) {
             Root(root)
         }
