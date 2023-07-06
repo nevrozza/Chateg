@@ -111,8 +111,9 @@ fun ChatsListContent(component: ChatsListComponent) {
                                 Modifier.alpha(if (it.onlineMessagesCount - it.savedMessagesCount == 0) 0f else 1f),
                                 contentAlignment = Alignment.Center
                             ) {
+                                val text = it.onlineMessagesCount - it.savedMessagesCount
                                 Text(
-                                    (it.onlineMessagesCount - it.savedMessagesCount).toString(),
+                                    (if(text > 10) "10+" else text).toString(),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp,
                                     textAlign = TextAlign.Center,

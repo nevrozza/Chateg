@@ -16,4 +16,7 @@ interface MainRepository {
 
     fun fetchLifecycle(): String
     fun saveLifecycle(lifecycle: String)
+
+    fun fetchIsInChat(): Boolean
+    fun saveIsInChat(isInChat: Boolean)
 }

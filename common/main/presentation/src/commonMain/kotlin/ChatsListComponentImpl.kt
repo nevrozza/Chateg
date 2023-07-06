@@ -2,12 +2,15 @@ import ChatsListComponent.Model
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
+import com.arkivanov.essenty.lifecycle.Lifecycle
 import di.Inject
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@DelicateCoroutinesApi
 class ChatsListComponentImpl(
     componentContext: ComponentContext,
     private val onChat: (id: String, nick: String) -> Unit
@@ -19,8 +22,11 @@ class ChatsListComponentImpl(
     init {
         GlobalScope.launch(Dispatchers.IO) {
             while (true) {
+                val appLifecycle = mainRepository.fetchLifecycle()
+                val isInChat = mainRepository.fetchIsInChat()
+                val times = if(appLifecycle == Lifecycle.State.CREATED.name && isInChat) 30 else 60
                 updateChats()
-                delay((_models.value.seconds * 1000).toLong())
+                delay((times * 1000).toLong())
             }
         }
     }
@@ -51,7 +57,10 @@ class ChatsListComponentImpl(
             for (i in onlineChats) {
                 onlineChatsMap[i.nick] = i.onlineMessagesCount
                 if((gotChatsMap[i.nick] ?: i.onlineMessagesCount) < i.onlineMessagesCount) {
-                    println("sad")
+                    val lifecycle = mainRepository.fetchLifecycle()
+                    if(lifecycle != Lifecycle.State.RESUMED.name) {
+                        createNotification("Новое сообщение от ${i.nick}")
+                    }
                 }
             }
             mainRepository.saveGotMessages(onlineChatsMap.toString())

@@ -71,10 +71,19 @@ class SettingsMainDataSource(
         settings[lifecycleKey] = lifecycle
     }
 
+    fun fetchIsInChat(): Boolean {
+        return settings[isInChatKey, false]
+    }
+
+    fun saveIsInChat(isInChat: Boolean) {
+        settings[isInChatKey] = isInChat
+    }
+
     companion object {
         const val messagesKey = "messagesKey"
         const val getMessagesKey = "getMessagesKey"
         const val mTextsKey = "mTextsKey"
         const val lifecycleKey = "lifecycleKey"
+        const val isInChatKey = "isInChatKey"
     }
 }

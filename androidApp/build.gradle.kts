@@ -39,6 +39,9 @@ android {
 }
 
 dependencies {
+    implementation(project(":common:main:api"))
+    implementation(project(":common:notifications"))
+
     implementation(project(":common:umbrella-compose"))
     implementation(project(":common:umbrella-core"))
     implementation(project(":common:core"))

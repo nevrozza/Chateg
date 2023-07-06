@@ -47,7 +47,7 @@ class JsoupMainRemoteDataSource(
         var numOfIterations = 0
         val countedMessages = mutableMapOf<String, Int>()
         val allMessages = mutableListOf<String>()
-        while (true) {
+        while (numOfIterations != 2) {
             numOfIterations++
             if (numOfIterations != 1) {
                 lastIncideBox = incideInboxDoc
@@ -76,7 +76,7 @@ class JsoupMainRemoteDataSource(
                 .get()
         var previousDoc: Document
         var numOfIterations = 0
-        while (true) {
+        while (numOfIterations != 4) {
             numOfIterations++
             if (numOfIterations != 1) {
                 previousDoc = doc

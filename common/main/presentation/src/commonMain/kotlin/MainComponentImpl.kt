@@ -19,9 +19,12 @@ import com.arkivanov.essenty.lifecycle.doOnStop
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import di.Inject
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+@DelicateCoroutinesApi
 class MainComponentImpl(
     componentContext: ComponentContext,
     private val onUnLogin: () -> Unit
@@ -55,6 +58,7 @@ class MainComponentImpl(
         lifecycle.doOnDestroy {
             mainRepository.saveLifecycle(lifecycle.state.name)
         }
+
     }
     private fun child(config: Config, componentContext: ComponentContext): Child =
         when (config) {

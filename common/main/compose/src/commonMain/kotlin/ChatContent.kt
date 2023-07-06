@@ -45,15 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isShiftPressed
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,7 +64,7 @@ fun ChatContent(component: ChatComponent) {
         val width = this.maxWidth.value.dp
         Column(verticalArrangement = Arrangement.Bottom) {
             LazyColumn(
-                Modifier.weight(0.1f).padding(horizontal = 5.dp),
+                Modifier.weight(0.1f).padding(horizontal = 5.dp).padding(top = keyboardHeight),
                 verticalArrangement = Arrangement.Bottom,
                 reverseLayout = true
             ) {
@@ -110,7 +102,6 @@ fun ChatContent(component: ChatComponent) {
                 }
             }
 
-            var textState by remember { mutableStateOf(TextFieldValue(text = model.mText)) }
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -118,23 +109,11 @@ fun ChatContent(component: ChatComponent) {
             ) {
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomStart) {
                     OutlinedTextField(
-                        value = textState,
+                        value = model.mText,
                         modifier = Modifier
-                            .onKeyEvent {
-                                if (it.key.keyCode == Key.Enter.keyCode && it.type == KeyEventType.KeyDown && it.isShiftPressed) {
-                                    component.onMessageTextChange("${model.mText}\n")
-                                    textState = textState.copy(
-                                        text = model.mText,
-                                        selection = TextRange(textState.text.length + 1)
-                                    )
-                                }
-                                false
-                            }
                             .width(width - 45.dp),
                         onValueChange = {
-                            component.onMessageTextChange(it.text)
-                            textState = it
-
+                            component.onMessageTextChange(it)
                         },
                         placeholder = {
                             Text(
@@ -160,12 +139,7 @@ fun ChatContent(component: ChatComponent) {
                             IconButton(
                                 enabled = model.mText.isNotBlank(),
                                 onClick = {
-                                component.sendMessage(model.mText)
-                                component.onMessageTextChange("")
-                                textState = textState.copy(
-                                    text = model.mText,
-                                    selection = TextRange(textState.text.length)
-                                )
+                                component.sendMessage()
                             }) {
                                 Icon(
                                     Icons.Rounded.Send,

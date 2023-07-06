@@ -45,6 +45,12 @@ class MainActivity : AppCompatActivity() {
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        PlatformSDK.init(
+            PlatformConfiguration(applicationContext),
+            OS(OSs.Android.name)
+        )
+
+
         val periodicWorkRequest = PeriodicWorkRequestBuilder<WManager>(16, TimeUnit.MINUTES).build()
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
             "uniqueWorkName",
@@ -53,10 +59,6 @@ class MainActivity : AppCompatActivity() {
         )
         Log.e("xxx", WorkManager.isInitialized().toString())
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        PlatformSDK.init(
-            PlatformConfiguration(applicationContext),
-            OS(OSs.Android.name)
-        )
 
 
         WindowCompat.setDecorFitsSystemWindows(window, false)

@@ -3,6 +3,9 @@ import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.value.MutableValue
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.Lifecycle
+import com.arkivanov.essenty.lifecycle.doOnDestroy
+import com.arkivanov.essenty.lifecycle.doOnResume
+import com.arkivanov.essenty.lifecycle.doOnStop
 import di.Inject
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +27,13 @@ class ChatComponentImpl(
     private val mainRepository: MainRepository = Inject.instance()
 
     init {
+        lifecycle.doOnResume {
+            mainRepository.saveIsInChat(true)
+        }
+        lifecycle.doOnDestroy {
+            mainRepository.saveIsInChat(false)
+        }
+
         if (delayMessage != 0) {
             GlobalScope.launch(Dispatchers.IO) {
 
@@ -60,9 +70,10 @@ class ChatComponentImpl(
             _models.value.copy(messages = mainRepository.getMessages(id = id, nick = nick))
     }
 
-    override fun sendMessage(text: String) {
+    override fun sendMessage() {
         GlobalScope.launch(Dispatchers.IO) {
-            mainRepository.sendMessage(id, text)
+            mainRepository.sendMessage(id, _models.value.mText)
+            onMessageTextChange("")
             _models.value = _models.value.copy(timeout = 55)
             getMessages()
             while (_models.value.timeout > 0) {
@@ -89,7 +100,7 @@ class PreviewChatComponent : ChatComponent {
     override val model: Value<Model> = MutableValue(Model("Igoryok"))
     override fun onMessageTextChange(text: String) {}
     override suspend fun getMessages() {}
-    override fun sendMessage(text: String) {}
+    override fun sendMessage() {}
 
     override fun newDaySet(day: String) {}
 }

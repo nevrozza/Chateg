@@ -59,6 +59,14 @@ class MainRepositoryImpl(
         cacheDataSource.saveLifecycle(lifecycle)
     }
 
+    override fun fetchIsInChat(): Boolean {
+        return cacheDataSource.fetchIsInChat()
+    }
+
+    override fun saveIsInChat(isInChat: Boolean) {
+        cacheDataSource.saveIsInChat(isInChat)
+    }
+
     override suspend fun getMessages(id: String, nick: String): List<ChatComponent.Message> {
         return remoteDataSource.getMessages(id, nick)
     }

@@ -7,7 +7,7 @@ interface ChatComponent {
 
     fun onMessageTextChange(text: String)
     suspend fun getMessages()
-    fun sendMessage(text: String)
+    fun sendMessage()
     fun newDaySet(day: String)
 
     data class Model(
