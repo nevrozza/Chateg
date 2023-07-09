@@ -29,12 +29,12 @@ class SettingsMainDataSource(
         return mapTexts
     }
 
-    fun fetchGotMessages(): Map<String, Int> {
+    fun fetchGotMessages(): Map<String, String> {
         val messages = settings[getMessagesKey, ""]
         val messagesString = messages.toMap()
-        val mapMessages = mutableMapOf<String, Int>()
+        val mapMessages = mutableMapOf<String, String>()
         for (i in messagesString) {
-            mapMessages[i.key] = i.value.toInt()
+            mapMessages[i.key] = i.value
         }
         return mapMessages
     }
@@ -71,11 +71,11 @@ class SettingsMainDataSource(
         settings[lifecycleKey] = lifecycle
     }
 
-    fun fetchIsInChat(): Boolean {
-        return settings[isInChatKey, false]
+    fun fetchIsInChat(): String {
+        return settings[isInChatKey, ""]
     }
 
-    fun saveIsInChat(isInChat: Boolean) {
+    fun saveIsInChat(isInChat: String) {
         settings[isInChatKey] = isInChat
     }
 

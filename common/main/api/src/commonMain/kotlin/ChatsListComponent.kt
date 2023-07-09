@@ -5,6 +5,7 @@ interface ChatsListComponent {
 
     fun onChatClicked(id: String, nick: String)
     fun updateChats()
+    fun clearChats()
 
 
 
@@ -16,8 +17,8 @@ interface ChatsListComponent {
 
     data class Chat(
         val nick: String = "",
-        val onlineMessagesCount: Int = 0,
-        val savedMessagesCount: Int = 0,
+        val onlineMessagesCount: String = "",
+        val savedMessagesCount: String = "",
         val id: String = ""
     )
 }

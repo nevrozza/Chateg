@@ -14,13 +14,20 @@ class JsoupMainRemoteDataSource(
     var inboxDoc: Document = Document("")
     private var cookies: Map<String, String> = authRepository.fetchCookies()
 
-    suspend fun performChats(): Map<String, Int> {
+    suspend fun performChats(): Map<String, String> {
         cookies = authRepository.fetchCookies()
 
         inboxDoc = Jsoup.connect("https://club.chateg.club/inbox/?p=1")
             .cookies(cookies)
             .get()
         return performChatsWithoutParcing()
+    }
+
+    suspend fun clearChats() {
+        val doc = Jsoup.connect("http://club.chateg.club/confirm/?del=1&m=i&act=con")
+            .cookies(cookies)
+            .get()
+
     }
 
     suspend fun sendMessage(request: JsoupMessageSendRequest) {
@@ -41,13 +48,13 @@ class JsoupMainRemoteDataSource(
 
     }
 
-    fun performChatsWithoutParcing(): Map<String, Int> {
+    fun performChatsWithoutParcing(): Map<String, String> {
         var incideInboxDoc = inboxDoc
         var lastIncideBox: Document
         var numOfIterations = 0
         val countedMessages = mutableMapOf<String, Int>()
         val allMessages = mutableListOf<String>()
-        while (numOfIterations != 2) {
+        while (true) {
             numOfIterations++
             if (numOfIterations != 1) {
                 lastIncideBox = incideInboxDoc
@@ -67,6 +74,8 @@ class JsoupMainRemoteDataSource(
         }
         return countedMessages
     }
+
+
 
     suspend fun getMessages(id: String, nick: String): List<ChatComponent.Message> {
         val messages = mutableListOf<ChatComponent.Message>()

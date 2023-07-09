@@ -1,6 +1,8 @@
 import com.arkivanov.essenty.lifecycle.Lifecycle
 
 interface MainRepository {
+    suspend fun clearChats(): List<ChatsListComponent.Chat>
+
     fun fetchOnlineMessagesWithoutParcing(): List<ChatsListComponent.Chat>
     suspend fun fetchOnlineMessages(): List<ChatsListComponent.Chat>
     suspend fun getMessages(id: String, nick: String): List<ChatComponent.Message>
@@ -17,6 +19,6 @@ interface MainRepository {
     fun fetchLifecycle(): String
     fun saveLifecycle(lifecycle: String)
 
-    fun fetchIsInChat(): Boolean
-    fun saveIsInChat(isInChat: Boolean)
+    fun fetchIsInChat(): String
+    fun saveIsInChat(isInChat: String)
 }

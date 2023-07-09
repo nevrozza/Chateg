@@ -4,6 +4,8 @@ import OS
 import PlatformConfiguration
 import Root
 import android.annotation.SuppressLint
+import android.app.NotificationManager
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.res.Resources.Theme
 import android.os.Bundle
@@ -30,6 +32,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.arkivanov.decompose.defaultComponentContext
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import createNotification
 import getColors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -45,8 +48,9 @@ class MainActivity : AppCompatActivity() {
     @OptIn(ExperimentalComposeUiApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         PlatformSDK.init(
-            PlatformConfiguration(applicationContext),
+            PlatformConfiguration(androidContext = applicationContext, notificationManager = notificationManager),
             OS(OSs.Android.name)
         )
 

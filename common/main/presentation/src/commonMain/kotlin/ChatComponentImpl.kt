@@ -28,10 +28,10 @@ class ChatComponentImpl(
 
     init {
         lifecycle.doOnResume {
-            mainRepository.saveIsInChat(true)
+            mainRepository.saveIsInChat(nick)
         }
         lifecycle.doOnDestroy {
-            mainRepository.saveIsInChat(false)
+            mainRepository.saveIsInChat("")
         }
 
         if (delayMessage != 0) {
@@ -59,7 +59,7 @@ class ChatComponentImpl(
 
             while (componentContext.lifecycle.state != Lifecycle.State.DESTROYED) {
                 getMessages()
-                delay(30000)
+                delay(20000)
             }
 
         }

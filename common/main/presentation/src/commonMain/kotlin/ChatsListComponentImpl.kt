@@ -24,10 +24,17 @@ class ChatsListComponentImpl(
             while (true) {
                 val appLifecycle = mainRepository.fetchLifecycle()
                 val isInChat = mainRepository.fetchIsInChat()
-                val times = if(appLifecycle == Lifecycle.State.CREATED.name && isInChat) 30 else 60
+                val times =
+                    if (appLifecycle == Lifecycle.State.CREATED.name && isInChat != "") 30 else 60
                 updateChats()
                 delay((times * 1000).toLong())
             }
+        }
+    }
+
+    override fun clearChats() {
+        GlobalScope.launch(Dispatchers.IO) {
+            _models.value = _models.value.copy(chats = mainRepository.clearChats())
         }
     }
 
@@ -51,19 +58,32 @@ class ChatsListComponentImpl(
 
     override fun updateChats() {
         GlobalScope.launch {
+            val isInChat = mainRepository.fetchIsInChat()
             val gotChatsMap = mainRepository.fetchGotMessages()
             val onlineChats = mainRepository.fetchOnlineMessages()
             val onlineChatsMap = mutableMapOf<String, Int>()
+            val updatedChats = mutableMapOf<String, Int>()
             for (i in onlineChats) {
+
+                if (isInChat == i.nick)
+                    updatedChats[i.nick] = onlineChats[onlineChats.indexOf(i)].onlineMessagesCount
+                else
+                    updatedChats[i.nick] = onlineChats[onlineChats.indexOf(i)].savedMessagesCount
+
+
+
+
                 onlineChatsMap[i.nick] = i.onlineMessagesCount
-                if((gotChatsMap[i.nick] ?: i.onlineMessagesCount) < i.onlineMessagesCount) {
+                if ((gotChatsMap[i.nick] ?: i.onlineMessagesCount) < i.onlineMessagesCount) {
                     val lifecycle = mainRepository.fetchLifecycle()
-                    if(lifecycle != Lifecycle.State.RESUMED.name) {
+                    if (lifecycle != Lifecycle.State.RESUMED.name || isInChat != i.nick) {
+                        kmmPrint("$isInChat ${i.nick}")
                         createNotification("Новое сообщение от ${i.nick}")
                     }
                 }
             }
             mainRepository.saveGotMessages(onlineChatsMap.toString())
+            mainRepository.saveMessages(updatedChats.toString())
             _models.value = _models.value.copy(chats = onlineChats)
         }
     }
@@ -72,6 +92,7 @@ class ChatsListComponentImpl(
 
 class PreviewChatsListComponent : ChatsListComponent {
     override fun updateChats() {}
+    override fun clearChats() {}
     override fun onChatClicked(id: String, nick: String) {}
     override val model: Value<Model> = MutableValue(Model("Вход"))
 }

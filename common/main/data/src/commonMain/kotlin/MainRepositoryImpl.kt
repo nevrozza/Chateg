@@ -7,23 +7,40 @@ class MainRepositoryImpl(
     private val cacheDataSource: SettingsMainDataSource
 ): MainRepository {
     override suspend fun fetchOnlineMessages(): List<ChatsListComponent.Chat> {
+        val offlineMap = cacheDataSource.fetchGotMessages()
         val onlineMap = remoteDataSource.performChats()
         val savedMap = cacheDataSource.fetchSavedMessages()
         val chats = mutableListOf<ChatsListComponent.Chat>()
-        for (i in onlineMap) {
-            chats += ChatsListComponent.Chat(nick = i.key, onlineMessagesCount = i.value, savedMessagesCount = savedMap[i.key] ?: 0, id = remoteDataSource.getId(i.key))
+        for (i in offlineMap) {
+            val onlineMessagesCount = if(onlineMap.contains(i.key)) {
+                onlineMap[i.key] ?: 0
+            } else {
+                i.value
+            }
+            chats += ChatsListComponent.Chat(
+                nick = i.key,
+                onlineMessagesCount = onlineMessagesCount,
+                savedMessagesCount = savedMap[i.key] ?: 0,
+                id = remoteDataSource.getId(i.key)
+            )
         }
+        if(!onlineMap.keys.contains("igorek")) chats += ChatsListComponent.Chat(nick = "igorek", id = "4840591")
         return chats
+    }
+
+    override suspend fun clearChats(): List<ChatsListComponent.Chat> {
+        remoteDataSource.clearChats()
+        return listOf(ChatsListComponent.Chat(nick = "igorek", id = "4840591"))
     }
 
     override fun fetchOnlineMessagesWithoutParcing(): List<ChatsListComponent.Chat> {
         val onlineMap = remoteDataSource.performChatsWithoutParcing()
         val savedMap = cacheDataSource.fetchSavedMessages()
-        val chats = mutableListOf<ChatsListComponent.Chat>()
+        var chats = mutableListOf<ChatsListComponent.Chat>()
         for (i in onlineMap) {
             chats += ChatsListComponent.Chat(nick = i.key, onlineMessagesCount = i.value, savedMessagesCount = savedMap[i.key] ?: 0, id = remoteDataSource.getId(i.key))
         }
-
+        if(!onlineMap.keys.contains("igorek")) chats += ChatsListComponent.Chat(nick = "igorek", id = "4840591")
         return chats
     }
 
@@ -59,11 +76,11 @@ class MainRepositoryImpl(
         cacheDataSource.saveLifecycle(lifecycle)
     }
 
-    override fun fetchIsInChat(): Boolean {
+    override fun fetchIsInChat(): String {
         return cacheDataSource.fetchIsInChat()
     }
 
-    override fun saveIsInChat(isInChat: Boolean) {
+    override fun saveIsInChat(isInChat: String) {
         cacheDataSource.saveIsInChat(isInChat)
     }
 
