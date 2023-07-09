@@ -11,20 +11,23 @@ class MainRepositoryImpl(
         val onlineMap = remoteDataSource.performChats()
         val savedMap = cacheDataSource.fetchSavedMessages()
         val chats = mutableListOf<ChatsListComponent.Chat>()
+        if(!offlineMap.containsKey("igorek") || !onlineMap.containsKey("igorek")) offlineMap["igorek"] = ""
+        for (i in onlineMap) {
+            if(!offlineMap.containsKey(i.key)) offlineMap[i.key] = i.value
+        }
         for (i in offlineMap) {
             val onlineMessagesCount = if(onlineMap.contains(i.key)) {
-                onlineMap[i.key] ?: 0
+                onlineMap[i.key] ?: ""
             } else {
                 i.value
             }
             chats += ChatsListComponent.Chat(
                 nick = i.key,
                 onlineMessagesCount = onlineMessagesCount,
-                savedMessagesCount = savedMap[i.key] ?: 0,
-                id = remoteDataSource.getId(i.key)
+                savedMessagesCount = savedMap[i.key] ?: "",
+                id = if(i.key == "igorek") "4840591" else remoteDataSource.getId(i.key)
             )
         }
-        if(!onlineMap.keys.contains("igorek")) chats += ChatsListComponent.Chat(nick = "igorek", id = "4840591")
         return chats
     }
 
@@ -34,17 +37,32 @@ class MainRepositoryImpl(
     }
 
     override fun fetchOnlineMessagesWithoutParcing(): List<ChatsListComponent.Chat> {
+        val offlineMap = cacheDataSource.fetchGotMessages()
         val onlineMap = remoteDataSource.performChatsWithoutParcing()
         val savedMap = cacheDataSource.fetchSavedMessages()
-        var chats = mutableListOf<ChatsListComponent.Chat>()
+
+        val chats = mutableListOf<ChatsListComponent.Chat>()
+        if(!offlineMap.containsKey("igorek") || !onlineMap.containsKey("igorek")) offlineMap["igorek"] = ""
         for (i in onlineMap) {
-            chats += ChatsListComponent.Chat(nick = i.key, onlineMessagesCount = i.value, savedMessagesCount = savedMap[i.key] ?: 0, id = remoteDataSource.getId(i.key))
+            if(!offlineMap.containsKey(i.key)) offlineMap[i.key] = i.value
         }
-        if(!onlineMap.keys.contains("igorek")) chats += ChatsListComponent.Chat(nick = "igorek", id = "4840591")
+        for (i in offlineMap) {
+            val onlineMessagesCount = if(onlineMap.contains(i.key)) {
+                onlineMap[i.key] ?: ""
+            } else {
+                i.value
+            }
+            chats += ChatsListComponent.Chat(
+                nick = i.key,
+                onlineMessagesCount = onlineMessagesCount,
+                savedMessagesCount = savedMap[i.key] ?: "",
+                id = if(i.key == "igorek") "4840591" else remoteDataSource.getId(i.key)
+            )
+        }
         return chats
     }
 
-    override fun fetchSavedMessages(): Map<String, Int> {
+    override fun fetchSavedMessages(): Map<String, String> {
         return cacheDataSource.fetchSavedMessages()
     }
 
@@ -52,7 +70,7 @@ class MainRepositoryImpl(
         cacheDataSource.saveMessages(messages)
     }
 
-    override fun fetchGotMessages(): Map<String, Int> {
+    override fun fetchGotMessages(): Map<String, String> {
         return cacheDataSource.fetchGotMessages()
     }
 

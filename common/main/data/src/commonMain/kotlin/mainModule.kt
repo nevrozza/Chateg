@@ -12,7 +12,7 @@ val mainModule = DI.Module("mainModule") {
     }
 
     bind<JsoupMainRemoteDataSource>() with provider {
-        JsoupMainRemoteDataSource(instance())
+        JsoupMainRemoteDataSource(instance(), instance())
     }
 
     bind<MainRepository>() with singleton {

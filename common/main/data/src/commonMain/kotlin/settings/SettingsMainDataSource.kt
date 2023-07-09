@@ -29,7 +29,7 @@ class SettingsMainDataSource(
         return mapTexts
     }
 
-    fun fetchGotMessages(): Map<String, String> {
+    fun fetchGotMessages(): MutableMap<String, String> {
         val messages = settings[getMessagesKey, ""]
         val messagesString = messages.toMap()
         val mapMessages = mutableMapOf<String, String>()
@@ -40,16 +40,18 @@ class SettingsMainDataSource(
     }
 
     fun saveGotMessages(messages: String) {
+        println(messages)
         settings[getMessagesKey] = messages
     }
 
-    fun fetchSavedMessages(): Map<String, Int> {
+    fun fetchSavedMessages(): Map<String, String> {
         val messages = settings[messagesKey, ""]
         val messagesString = messages.toMap()
-        val mapMessages = mutableMapOf<String, Int>()
+        val mapMessages = mutableMapOf<String, String>()
         for (i in messagesString) {
-            mapMessages[i.key] = i.value.toInt()
+            mapMessages[i.key] = i.value
         }
+        println(mapMessages)
         return mapMessages
     }
 

@@ -91,16 +91,20 @@ fun ChatsListContent(component: ChatsListComponent) {
                 items(model.chats) {
                     Chat(component, it)
                     if(model.chats.indexOf(it) == model.chats.lastIndex) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+
                             Spacer(Modifier.height(30.dp))
-                            IconButton(
-                                onClick = { component.clearChats() }
-                            ) {
-                                Icon(Icons.Rounded.AutoDelete, null)
-                            }
-                            Text("Чистите список чатов, чтобы не лагало")
-                            Text("Чат \"igorek\" удалён не будет")
-                        }
+                            Text("Это приложение является оболочкой для сайта Chateg.club\n" +
+                                    "Поэтому здесь есть некоторые ограничения:\n" +
+                                    "В приложении можно просмотреть максимум 40 сообщений\n" +
+                                    "Есть бан на 55 секунд после отправки сообщения\n" +
+                                    "Задержка по уведомлениям:\n" +
+                                    "Когда приложение полностью выключено - 15 мин\n" +
+                                    "Когда свёрнуто в списке чатов - 60 секунд\n"+
+                                    "Когда свёрнуто в чате - 30 секунд\n\n"+
+                                    "Поэтому желательно это приложение не закрывать"
+                                ,textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(horizontal = 5.dp))
+
+
                     }
                 }
             }
@@ -127,13 +131,13 @@ fun Chat(component: ChatsListComponent, it: ChatsListComponent.Chat) {
                 "chatIcon"
             )
             Spacer(Modifier.fillMaxWidth().weight(.3f))
+
             Box(
-                Modifier.alpha(if (it.onlineMessagesCount - it.savedMessagesCount == 0) 0f else 1f),
+                Modifier.alpha(if (it.onlineMessagesCount == it.savedMessagesCount) 0f else 1f),
                 contentAlignment = Alignment.Center
             ) {
-                val text = it.onlineMessagesCount - it.savedMessagesCount
                 Text(
-                    text.toString(),
+                    "!",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                     textAlign = TextAlign.Center,

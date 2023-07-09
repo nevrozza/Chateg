@@ -32,10 +32,10 @@ class WManager(context : Context, params : WorkerParameters) : Worker(context, p
             if(lifecycle == Lifecycle.State.DESTROYED.name) {
                 val gotChatsMap = mainRepository.fetchGotMessages()
                 val onlineChats = mainRepository.fetchOnlineMessages()
-                val onlineChatsMap = mutableMapOf<String, Int>()
+                val onlineChatsMap = mutableMapOf<String, String>()
                 for (i in onlineChats) {
                     onlineChatsMap[i.nick] = i.onlineMessagesCount
-                    if ((gotChatsMap[i.nick] ?: i.onlineMessagesCount) < i.onlineMessagesCount) {
+                    if ((gotChatsMap[i.nick] ?: i.onlineMessagesCount) !=  i.onlineMessagesCount) {
 
 
                         createNotification("Новое сообщение от ${i.nick}")

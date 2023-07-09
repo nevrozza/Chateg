@@ -6,10 +6,13 @@ import di.Inject
 import org.jsoup.Connection
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import settings.SettingsMainDataSource
 
 
 class JsoupMainRemoteDataSource(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val cacheDataSource: SettingsMainDataSource
 ) {
     var inboxDoc: Document = Document("")
     private var cookies: Map<String, String> = authRepository.fetchCookies()
@@ -52,9 +55,10 @@ class JsoupMainRemoteDataSource(
         var incideInboxDoc = inboxDoc
         var lastIncideBox: Document
         var numOfIterations = 0
-        val countedMessages = mutableMapOf<String, Int>()
-        val allMessages = mutableListOf<String>()
-        while (true) {
+        val mapOfNickTime = mutableMapOf<String, String>()
+        val offlineNickTime = cacheDataSource.fetchGotMessages()
+        var allMessagesCount = 0
+        while (if(offlineNickTime.isNotEmpty()) allMessagesCount != 1  else true) {
             numOfIterations++
             if (numOfIterations != 1) {
                 lastIncideBox = incideInboxDoc
@@ -66,13 +70,17 @@ class JsoupMainRemoteDataSource(
             }
 
 
-            for (i in incideInboxDoc.select("a[href^=/friend/?uid=]")) {
-                allMessages += i.text()
-                countedMessages[i.text()] = allMessages.count { it == i.text() }
+            for (i in incideInboxDoc.select("td")) { //a[href^=/friend/?uid=]
+                val nick = i.select("a[href^=/friend/?uid=]").text()
+                if(nick!="" && !mapOfNickTime.containsKey(nick)) {
+                    val time = i.text().replace(nick, "").replace(" ", "").replace("\n", "")
+                    allMessagesCount += 1
+                    mapOfNickTime[nick] = time
+                }
             }
-            if (numOfIterations * 10 > allMessages.count()) break
+            if (numOfIterations * 10 > allMessagesCount) break
         }
-        return countedMessages
+        return mapOfNickTime
     }
 
 
@@ -143,9 +151,18 @@ class JsoupMainRemoteDataSource(
                     .cookies(cookies)
                     .get()
             if (incideInboxDoc.toString().contains(nick)) {
-                val linkElement = incideInboxDoc.selectFirst("a:containsOwn($nick)")
-                val linkHref = linkElement?.attr("href")
-                return (linkHref ?: "").split("?uid=").last()
+
+                val links: List<Element> = incideInboxDoc.select("a[href*=/friend/?uid=]") // Ищем ссылки, содержащие "/friend/?uid="
+
+                for (link in links) {
+                    val href = link.attr("href") // Получаем значение атрибута href
+                    val id = href.substringAfterLast("=") // Получаем айди из значения href
+                    val linkText = link.text() // Получаем текст ссылки
+
+                    if (linkText == nick) {
+                        return id
+                    }
+                }
             } else {
                 numOfIterations++
             }

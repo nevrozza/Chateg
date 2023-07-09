@@ -7,10 +7,10 @@ interface MainRepository {
     suspend fun fetchOnlineMessages(): List<ChatsListComponent.Chat>
     suspend fun getMessages(id: String, nick: String): List<ChatComponent.Message>
     suspend fun sendMessage(id: String, text: String)
-    fun fetchSavedMessages():  Map<String, Int>//List<ChatsListComponent.Chat>// Map<String, Int>
+    fun fetchSavedMessages(): Map<String, String>//List<ChatsListComponent.Chat>// Map<String, Int>
     fun saveMessages(messages: String)
 
-    fun fetchGotMessages():  Map<String, Int>//List<ChatsListComponent.Chat>// Map<String, Int>
+    fun fetchGotMessages(): Map<String, String>//List<ChatsListComponent.Chat>// Map<String, Int>
     fun saveGotMessages(messages: String)
 
     fun fetchMTexts(): Map<String, String>
